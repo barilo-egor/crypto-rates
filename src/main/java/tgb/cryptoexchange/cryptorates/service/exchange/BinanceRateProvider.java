@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 import tgb.cryptoexchange.cryptorates.constants.CryptoPair;
 import tgb.cryptoexchange.cryptorates.constants.Exchange;
 import tgb.cryptoexchange.cryptorates.dto.BinanceResponse;
+import tgb.cryptoexchange.cryptorates.exception.UnsupportedCryptoPairException;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -27,6 +28,9 @@ public class BinanceRateProvider extends ExchangeRateProvider {
 
     @Override
     public BigDecimal getRate(CryptoPair cryptoPair) {
+        if (!getExchange().getPairs().contains(cryptoPair)) {
+            throw new UnsupportedCryptoPairException("Unsupported crypto pair: " + cryptoPair);
+        }
         BinanceResponse response = exchangeWebClientFactory.get(
                 getExchange(),
                 uriBuilder -> uriBuilder.path("/avgPrice")
