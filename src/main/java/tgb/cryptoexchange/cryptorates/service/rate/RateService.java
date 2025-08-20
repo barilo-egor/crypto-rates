@@ -20,7 +20,7 @@ public class RateService {
 
     private final Map<CryptoPair, List<ExchangeRateProvider>> exchangeClients;
 
-    private final Map<CryptoPair, CryptoRateCache> cache = new HashMap<>();
+    private final Map<CryptoPair, CryptoRateCache> cache = new EnumMap<>(CryptoPair.class);
 
     private final Integer ttlSeconds;
 
