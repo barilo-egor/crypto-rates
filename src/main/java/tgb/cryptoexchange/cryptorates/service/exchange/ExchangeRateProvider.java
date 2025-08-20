@@ -5,9 +5,15 @@ import tgb.cryptoexchange.cryptorates.constants.Exchange;
 
 import java.math.BigDecimal;
 
-public interface ExchangeRateProvider {
+public abstract class ExchangeRateProvider {
 
-    BigDecimal getRate(CryptoPair cryptoPair);
+    protected final ExchangeWebClientFactory exchangeWebClientFactory;
 
-    Exchange getExchange();
+    protected ExchangeRateProvider(ExchangeWebClientFactory exchangeWebClientFactory) {
+        this.exchangeWebClientFactory = exchangeWebClientFactory;
+    }
+
+    public abstract BigDecimal getRate(CryptoPair cryptoPair);
+
+    public abstract Exchange getExchange();
 }

@@ -1,7 +1,6 @@
 package tgb.cryptoexchange.cryptorates.service.exchange;
 
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.client.WebClient;
 import tgb.cryptoexchange.cryptorates.constants.CryptoPair;
 import tgb.cryptoexchange.cryptorates.constants.Exchange;
 import tgb.cryptoexchange.cryptorates.dto.ExchangeRateResponse;
@@ -10,12 +9,10 @@ import tgb.cryptoexchange.cryptorates.exception.UnsupportedCryptoPairException;
 import java.math.BigDecimal;
 
 @Component
-public class ExchangeRateRateProvider implements ExchangeRateProvider {
+public class ExchangeRateRateProvider extends ExchangeRateProvider {
 
-    private final WebClient exchangeRateWebClient;
-
-    public ExchangeRateRateProvider(WebClient exchangeRateWebClient) {
-        this.exchangeRateWebClient = exchangeRateWebClient;
+    protected ExchangeRateRateProvider(ExchangeWebClientFactory exchangeWebClientFactory) {
+        super(exchangeWebClientFactory);
     }
 
     @Override
@@ -23,11 +20,10 @@ public class ExchangeRateRateProvider implements ExchangeRateProvider {
         if (CryptoPair.USD_RUB.equals(cryptoPair)) {
             throw new UnsupportedCryptoPairException("Unsupported crypto pair");
         }
-        ExchangeRateResponse response = exchangeRateWebClient.get()
-                .uri("/8ae628548cbe656cdc6f0a9e/latest/USD")
-                .retrieve()
-                .bodyToMono(ExchangeRateResponse.class)
-                .block();
+        ExchangeRateResponse response = exchangeWebClientFactory.get(getExchange(),
+                uriBuilder -> uriBuilder.path("/8ae628548cbe656cdc6f0a9e/latest/USD").build(),
+                ExchangeRateResponse.class
+        );
         if (response == null) {
             return null;
         }

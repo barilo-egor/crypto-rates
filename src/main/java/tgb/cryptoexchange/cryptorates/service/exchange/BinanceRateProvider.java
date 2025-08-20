@@ -1,7 +1,6 @@
 package tgb.cryptoexchange.cryptorates.service.exchange;
 
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.client.WebClient;
 import tgb.cryptoexchange.cryptorates.constants.CryptoPair;
 import tgb.cryptoexchange.cryptorates.constants.Exchange;
 import tgb.cryptoexchange.cryptorates.dto.BinanceResponse;
@@ -10,12 +9,10 @@ import tgb.cryptoexchange.cryptorates.exception.UnsupportedCryptoPairException;
 import java.math.BigDecimal;
 
 @Component
-public class BinanceRateProvider implements ExchangeRateProvider {
+public class BinanceRateProvider extends ExchangeRateProvider {
 
-    private final WebClient binanceWebClient;
-
-    public BinanceRateProvider(WebClient binanceWebClient) {
-        this.binanceWebClient = binanceWebClient;
+    protected BinanceRateProvider(ExchangeWebClientFactory exchangeWebClientFactory) {
+        super(exchangeWebClientFactory);
     }
 
     @Override
@@ -29,15 +26,13 @@ public class BinanceRateProvider implements ExchangeRateProvider {
             case TRX_USD -> "TRXUSDT";
             default -> throw new UnsupportedCryptoPairException("Unsupported crypto pair");
         };
-        BinanceResponse response = binanceWebClient.get()
-                .uri(
-                        uriBuilder -> uriBuilder.path("/avgPrice")
-                                .queryParam("symbol", pair)
-                                .build()
-                )
-                .retrieve()
-                .bodyToMono(BinanceResponse.class)
-                .block();
+        BinanceResponse response = exchangeWebClientFactory.get(
+                getExchange(),
+                uriBuilder -> uriBuilder.path("/avgPrice")
+                        .queryParam("symbol", pair)
+                        .build(),
+                BinanceResponse.class
+        );
         if (response == null) {
             return null;
         }
