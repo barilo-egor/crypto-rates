@@ -1,0 +1,3 @@
+rate:
+  cache:
+    ttl-seconds: 10

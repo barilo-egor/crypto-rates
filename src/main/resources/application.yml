@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: "crypto-rates"
+  config:
+    import: "optional:file:config/config.yml"
