@@ -7,6 +7,7 @@ import tgb.cryptoexchange.cryptorates.cache.CryptoRateCache;
 import tgb.cryptoexchange.cryptorates.constants.CryptoPair;
 import tgb.cryptoexchange.cryptorates.dto.CryptoRate;
 import tgb.cryptoexchange.cryptorates.exception.CryptoRatesException;
+import tgb.cryptoexchange.cryptorates.exception.ProviderNotFoundException;
 import tgb.cryptoexchange.cryptorates.service.exchange.ExchangeRateProvider;
 
 import java.math.BigDecimal;
@@ -40,7 +41,7 @@ public class RateService {
         }
         List<ExchangeRateProvider> exchangeRateProviders = this.exchangeClients.get(cryptoPair);
         if (exchangeRateProviders == null || exchangeRateProviders.isEmpty()) {
-            throw new CryptoRatesException("No exchange clients found for " + cryptoPair);
+            throw new ProviderNotFoundException("No exchange clients found for " + cryptoPair);
         }
         for (ExchangeRateProvider exchangeRateProvider : exchangeRateProviders) {
             try {
