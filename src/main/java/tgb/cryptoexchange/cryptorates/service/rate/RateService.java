@@ -34,9 +34,9 @@ public class RateService {
     }
 
     public CryptoRate getRate(CryptoPair cryptoPair) {
-        CryptoRateCache cache = this.cache.get(cryptoPair);
-        if (isValid(cache)) {
-            return cache.cryptoRate();
+        CryptoRateCache cryptoRateCache = this.cache.get(cryptoPair);
+        if (isValid(cryptoRateCache)) {
+            return cryptoRateCache.cryptoRate();
         }
         List<ExchangeRateProvider> exchangeRateProviders = this.exchangeClients.get(cryptoPair);
         if (exchangeRateProviders == null || exchangeRateProviders.isEmpty()) {
