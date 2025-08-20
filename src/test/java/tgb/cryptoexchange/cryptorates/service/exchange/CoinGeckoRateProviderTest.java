@@ -9,6 +9,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import org.springframework.web.util.UriBuilder;
@@ -16,6 +17,7 @@ import tgb.cryptoexchange.cryptorates.constants.CryptoPair;
 import tgb.cryptoexchange.cryptorates.constants.Exchange;
 import tgb.cryptoexchange.cryptorates.dto.CoinGeckoResponse;
 import tgb.cryptoexchange.cryptorates.exception.CryptoRatesException;
+import tgb.cryptoexchange.cryptorates.exception.UnsupportedCryptoPairException;
 
 import java.math.BigDecimal;
 import java.net.URI;
@@ -42,12 +44,24 @@ class CoinGeckoRateProviderTest {
         return Exchange.COIN_GECKO.getPairs();
     }
 
+    @Test
+    void shouldThrowExceptionIfPairNotConfigured() {
+        Exchange fakeExchange = Mockito.mock(Exchange.class);
+        Mockito.when(fakeExchange.getPairs()).thenReturn(List.of(CryptoPair.valueOf("ETH_USD")));
+        assertThrows(CryptoRatesException.class, () -> new CoinGeckoRateProvider(exchangeWebClientFactory) {
+            @Override
+            public Exchange getExchange() {
+                return fakeExchange;
+            }
+        });
+    }
+
     @ParameterizedTest
     @ValueSource(strings = { "ETH_USD", "XMR_USD" })
-    @DisplayName("getRate(CryptoPair cryptoPair) - валютная пара не обрабатываемая биржей CoinGecko - проброс CryptoRatesException")
-    void shouldThrowCryptoRatesExceptionIfNotExchangeCryptoPair(CryptoPair cryptoPair) {
-        assertThrows(CryptoRatesException.class, () -> coinGeckoRateProvider.getRate(cryptoPair),
-                "Null \"idsParam\" parameter");
+    @DisplayName("getRate(CryptoPair cryptoPair) - валютная пара не обрабатываемая биржей CoinGecko - проброс UnsupportedCryptoPairException")
+    void shouldThrowUnsupportedCryptoPairExceptionIfNotExchangeCryptoPair(CryptoPair cryptoPair) {
+        assertThrows(UnsupportedCryptoPairException.class, () -> coinGeckoRateProvider.getRate(cryptoPair),
+                "Unsupported crypto pair " + cryptoPair.name());
     }
 
     @ParameterizedTest
