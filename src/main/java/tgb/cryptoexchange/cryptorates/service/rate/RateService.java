@@ -66,15 +66,15 @@ public class RateService {
     }
 
     private boolean isValid(CryptoRateCache cache) {
-        return cache.timestamp() + (ttlSeconds * 1000) > System.currentTimeMillis();
+        return cache.timestamp() + (ttlSeconds * 1000) > clock.millis();
     }
 
     private CryptoRate createCryptoRate(CryptoPair cryptoPair, BigDecimal rate) {
         CryptoRate cryptoRate = new CryptoRate();
         cryptoRate.setRate(rate.setScale(8, RoundingMode.HALF_UP).doubleValue());
         cryptoRate.setPair(cryptoPair);
-        cryptoRate.setTimestamp(System.currentTimeMillis());
-        this.cache.put(cryptoPair, new CryptoRateCache(cryptoRate, System.currentTimeMillis()));
+        cryptoRate.setTimestamp(clock.millis());
+        this.cache.put(cryptoPair, new CryptoRateCache(cryptoRate, clock.millis()));
         return cryptoRate;
     }
 }
