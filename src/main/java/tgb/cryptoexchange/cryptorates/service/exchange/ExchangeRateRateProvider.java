@@ -4,7 +4,6 @@ import org.springframework.stereotype.Component;
 import tgb.cryptoexchange.cryptorates.constants.CryptoPair;
 import tgb.cryptoexchange.cryptorates.constants.Exchange;
 import tgb.cryptoexchange.cryptorates.dto.ExchangeRateResponse;
-import tgb.cryptoexchange.cryptorates.exception.UnsupportedCryptoPairException;
 
 import java.math.BigDecimal;
 
@@ -17,9 +16,6 @@ public class ExchangeRateRateProvider extends ExchangeRateProvider {
 
     @Override
     public BigDecimal getRate(CryptoPair cryptoPair) {
-        if (CryptoPair.USD_RUB.equals(cryptoPair)) {
-            throw new UnsupportedCryptoPairException("Unsupported crypto pair");
-        }
         ExchangeRateResponse response = exchangeWebClientFactory.get(getExchange(),
                 uriBuilder -> uriBuilder.path("/8ae628548cbe656cdc6f0a9e/latest/USD").build(),
                 ExchangeRateResponse.class

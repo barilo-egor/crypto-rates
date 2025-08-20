@@ -4,9 +4,10 @@ import org.springframework.stereotype.Service;
 import tgb.cryptoexchange.cryptorates.constants.CryptoPair;
 import tgb.cryptoexchange.cryptorates.constants.Exchange;
 import tgb.cryptoexchange.cryptorates.dto.CoinGeckoResponse;
-import tgb.cryptoexchange.cryptorates.exception.UnsupportedCryptoPairException;
+import tgb.cryptoexchange.cryptorates.exception.CryptoRatesException;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 @Service
 public class CoinGeckoRateProvider extends ExchangeRateProvider {
@@ -17,21 +18,28 @@ public class CoinGeckoRateProvider extends ExchangeRateProvider {
 
     @Override
     public BigDecimal getRate(CryptoPair cryptoPair) {
-        String idsParam = switch (cryptoPair) {
-            case BTC_USD, BTC_RUB -> "bitcoin";
-            case LTC_USD, LTC_RUB -> "litecoin";
-            default -> throw new UnsupportedCryptoPairException("Unsupported crypto pair");
-        };
-        String vsCurrenciesParam = switch (cryptoPair) {
-            case BTC_USD, LTC_USD -> "usd";
-            case BTC_RUB, LTC_RUB -> "rub";
-            default -> throw new UnsupportedCryptoPairException("Unsupported crypto pair");
-        };
+        String idsParam = null;
+        if (CryptoPair.BTC_USD.equals(cryptoPair) || CryptoPair.BTC_RUB.equals(cryptoPair)) {
+            idsParam = "bitcoin";
+        } else if (CryptoPair.LTC_USD.equals(cryptoPair) || CryptoPair.LTC_RUB.equals(cryptoPair)) {
+            idsParam = "litecoin";
+        }
+        String vsCurrenciesParam = null;
+        if (CryptoPair.BTC_USD.equals(cryptoPair) || CryptoPair.LTC_USD.equals(cryptoPair)) {
+            vsCurrenciesParam = "usd";
+        } else if (CryptoPair.BTC_RUB.equals(cryptoPair) || CryptoPair.LTC_RUB.equals(cryptoPair)) {
+            vsCurrenciesParam = "rub";
+        }
+        if (Objects.isNull(idsParam)) {
+            throw new CryptoRatesException("Null \"idsParam\" parameter");
+        }
+        final String finalIdsParam = idsParam;
+        final String finalVsCurrenciesParam = vsCurrenciesParam;
         CoinGeckoResponse response = exchangeWebClientFactory.get(
                 Exchange.COIN_GECKO,
                 uriBuilder -> uriBuilder.path("/simple/price")
-                        .queryParam("ids", idsParam)
-                        .queryParam("vsCurrencies", vsCurrenciesParam)
+                        .queryParam("ids", finalIdsParam)
+                        .queryParam("vsCurrencies", finalVsCurrenciesParam)
                         .build(),
                 CoinGeckoResponse.class
         );
