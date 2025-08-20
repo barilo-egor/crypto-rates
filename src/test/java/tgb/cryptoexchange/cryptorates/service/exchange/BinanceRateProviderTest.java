@@ -1,6 +1,7 @@
 package tgb.cryptoexchange.cryptorates.service.exchange;
 
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -62,5 +63,11 @@ class BinanceRateProviderTest {
         assertEquals("/avgPrice", result.getPath());
         assertTrue(result.getQuery().startsWith("symbol="));
         assertEquals(binanceResponse.getPrice(), actual);
+    }
+
+    @Test
+    @DisplayName("getExchange() - простой вызов - возвращается биржа Binance")
+    void shouldReturnBinanceExchange() {
+        assertEquals(Exchange.COIN_GECKO, binanceRateProvider.getExchange());
     }
 }
