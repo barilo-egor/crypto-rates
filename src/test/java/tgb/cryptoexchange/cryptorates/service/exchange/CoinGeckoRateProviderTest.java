@@ -1,5 +1,6 @@
 package tgb.cryptoexchange.cryptorates.service.exchange;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -43,6 +44,7 @@ class CoinGeckoRateProviderTest {
 
     @ParameterizedTest
     @ValueSource(strings = { "ETH_USD", "XMR_USD" })
+    @DisplayName("getRate(CryptoPair cryptoPair) - валютная пара не обрабатываемая биржей CoinGecko - проброс CryptoRatesException")
     void shouldThrowCryptoRatesExceptionIfNotExchangeCryptoPair(CryptoPair cryptoPair) {
         assertThrows(CryptoRatesException.class, () -> coinGeckoRateProvider.getRate(cryptoPair),
                 "Null \"idsParam\" parameter");
@@ -50,6 +52,7 @@ class CoinGeckoRateProviderTest {
 
     @ParameterizedTest
     @MethodSource("getCryptoPairs")
+    @DisplayName("getRate(CryptoPair cryptoPair) - null ответ от exchangeWebClientFactory - возвращается null")
     void shouldReturnNullIfResponseIsNull(CryptoPair cryptoPair) {
         when(exchangeWebClientFactory.get(eq(Exchange.COIN_GECKO), any(), eq(CoinGeckoResponse.class))).thenReturn(
                 null);
@@ -59,6 +62,7 @@ class CoinGeckoRateProviderTest {
 
     @ParameterizedTest
     @MethodSource("getCryptoPairs")
+    @DisplayName("getRate(CryptoPair cryptoPair) - exchangeWebClientFactory возвращает ответ с курсом - возвращается курс")
     void shouldReturnRateForAllCryptoPairs(CryptoPair cryptoPair) {
         CoinGeckoResponse coinGeckoResponse = new CoinGeckoResponse();
         Map<String, Map<String, BigDecimal>> rates = new HashMap<>();
@@ -98,6 +102,7 @@ class CoinGeckoRateProviderTest {
     }
 
     @Test
+    @DisplayName("getExchange() - простой вызов - возвращается биржа CoinGecko")
     void shouldReturnCoinGeckoExchange() {
         assertEquals(Exchange.COIN_GECKO, coinGeckoRateProvider.getExchange());
     }

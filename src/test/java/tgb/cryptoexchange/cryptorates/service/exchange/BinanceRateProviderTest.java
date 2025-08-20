@@ -1,5 +1,6 @@
 package tgb.cryptoexchange.cryptorates.service.exchange;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -38,6 +39,7 @@ class BinanceRateProviderTest {
 
     @ParameterizedTest
     @MethodSource("getCryptoPairs")
+    @DisplayName("getRate(CryptoPair cryptoPair) - null ответ от exchangeWebClientFactory - возвращается null")
     void shouldReturnNullIfResponseIsNull(CryptoPair cryptoPair) {
         when(exchangeWebClientFactory.get(eq(Exchange.BINANCE), any(), eq(BinanceResponse.class))).thenReturn(null);
         BigDecimal actual = binanceRateProvider.getRate(cryptoPair);
@@ -46,6 +48,7 @@ class BinanceRateProviderTest {
 
     @ParameterizedTest
     @MethodSource("getCryptoPairs")
+    @DisplayName("getRate(CryptoPair cryptoPair) - exchangeWebClientFactory возвращает ответ с курсом - возвращается курс")
     void shouldReturnRateForAllCryptoPairs(CryptoPair cryptoPair) {
         BinanceResponse binanceResponse = new BinanceResponse();
         binanceResponse.setPrice(BigDecimal.ONE);
