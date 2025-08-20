@@ -51,11 +51,9 @@ public class RateService {
         }
         for (ExchangeRateProvider exchangeRateProvider : exchangeRateProviders) {
             try {
-                if (exchangeRateProvider.getExchange().getPairs().contains(cryptoPair)) {
-                    BigDecimal rate = exchangeRateProvider.getRate(cryptoPair);
-                    if (Objects.nonNull(rate)) {
-                        return createCryptoRate(cryptoPair, rate);
-                    }
+                BigDecimal rate = exchangeRateProvider.getRate(cryptoPair);
+                if (Objects.nonNull(rate)) {
+                    return createCryptoRate(cryptoPair, rate);
                 }
             } catch (Exception e) {
                 log.warn("Ошибка при получении курса валютной пары {} у биржи {}:",
