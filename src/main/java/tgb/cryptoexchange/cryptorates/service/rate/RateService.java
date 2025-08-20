@@ -7,7 +7,7 @@ import tgb.cryptoexchange.cryptorates.cache.CryptoRateCache;
 import tgb.cryptoexchange.cryptorates.constants.CryptoPair;
 import tgb.cryptoexchange.cryptorates.dto.CryptoRate;
 import tgb.cryptoexchange.cryptorates.exception.CryptoRatesException;
-import tgb.cryptoexchange.cryptorates.service.exchange.ExchangeClient;
+import tgb.cryptoexchange.cryptorates.service.exchange.ExchangeRateProvider;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -17,18 +17,18 @@ import java.util.*;
 @Slf4j
 public class RateService {
 
-    private final Map<CryptoPair, List<ExchangeClient>> exchangeClients;
+    private final Map<CryptoPair, List<ExchangeRateProvider>> exchangeClients;
 
     private final Map<CryptoPair, CryptoRateCache> cache = new HashMap<>();
 
     private final Integer ttlSeconds;
 
-    public RateService(List<ExchangeClient> exchangeClients, @Value("${rate.cache.ttl-seconds:15}") Integer ttlSeconds) {
+    public RateService(List<ExchangeRateProvider> exchangeRateProviders, @Value("${rate.cache.ttl-seconds:15}") Integer ttlSeconds) {
         this.ttlSeconds = ttlSeconds;
         this.exchangeClients = new HashMap<>();
-        for (ExchangeClient exchangeClient : exchangeClients) {
-            for (CryptoPair cryptoPair : exchangeClient.getExchange().getPairs()) {
-                this.exchangeClients.computeIfAbsent(cryptoPair, k -> new ArrayList<>()).add(exchangeClient);
+        for (ExchangeRateProvider exchangeRateProvider : exchangeRateProviders) {
+            for (CryptoPair cryptoPair : exchangeRateProvider.getExchange().getPairs()) {
+                this.exchangeClients.computeIfAbsent(cryptoPair, k -> new ArrayList<>()).add(exchangeRateProvider);
             }
         }
     }
@@ -38,19 +38,19 @@ public class RateService {
         if (isValid(cache)) {
             return cache.cryptoRate();
         }
-        List<ExchangeClient> exchangeClients = this.exchangeClients.get(cryptoPair);
-        if (exchangeClients == null || exchangeClients.isEmpty()) {
+        List<ExchangeRateProvider> exchangeRateProviders = this.exchangeClients.get(cryptoPair);
+        if (exchangeRateProviders == null || exchangeRateProviders.isEmpty()) {
             throw new CryptoRatesException("No exchange clients found for " + cryptoPair);
         }
-        for (ExchangeClient exchangeClient : exchangeClients) {
+        for (ExchangeRateProvider exchangeRateProvider : exchangeRateProviders) {
             try {
-                BigDecimal rate = exchangeClient.getRate(cryptoPair);
+                BigDecimal rate = exchangeRateProvider.getRate(cryptoPair);
                 if (Objects.nonNull(rate)) {
                     return createCryptoRate(cryptoPair, rate);
                 }
             } catch (Exception e) {
                 log.warn("Ошибка при получении курса валютной пары {} у биржи {}:",
-                        cryptoPair.name(), exchangeClient.getExchange().name(), e);
+                        cryptoPair.name(), exchangeRateProvider.getExchange().name(), e);
             }
         }
         throw new CryptoRatesException("Couldn't get a rate from any exchange for " + cryptoPair.name());

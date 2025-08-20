@@ -10,11 +10,11 @@ import tgb.cryptoexchange.cryptorates.exception.UnsupportedCryptoPairException;
 import java.math.BigDecimal;
 
 @Service
-public class CoinGeckoClient implements ExchangeClient {
+public class CoinGeckoRateProvider implements ExchangeRateProvider {
 
     private final WebClient coinGeckoWebClient;
 
-    public CoinGeckoClient(WebClient coinGeckoWebClient) {
+    public CoinGeckoRateProvider(WebClient coinGeckoWebClient) {
         this.coinGeckoWebClient = coinGeckoWebClient;
     }
 

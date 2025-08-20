@@ -10,11 +10,11 @@ import tgb.cryptoexchange.cryptorates.exception.UnsupportedCryptoPairException;
 import java.math.BigDecimal;
 
 @Component
-public class ExchangeRateClient implements ExchangeClient{
+public class ExchangeRateRateProvider implements ExchangeRateProvider {
 
     private final WebClient exchangeRateWebClient;
 
-    public ExchangeRateClient(WebClient exchangeRateWebClient) {
+    public ExchangeRateRateProvider(WebClient exchangeRateWebClient) {
         this.exchangeRateWebClient = exchangeRateWebClient;
     }
 

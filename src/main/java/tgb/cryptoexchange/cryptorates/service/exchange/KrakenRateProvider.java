@@ -10,11 +10,11 @@ import tgb.cryptoexchange.cryptorates.exception.UnsupportedCryptoPairException;
 import java.math.BigDecimal;
 
 @Component
-public class KrakenClient implements ExchangeClient {
+public class KrakenRateProvider implements ExchangeRateProvider {
 
     private final WebClient krakenWebClient;
 
-    public KrakenClient(WebClient krakenWebClient) {
+    public KrakenRateProvider(WebClient krakenWebClient) {
         this.krakenWebClient = krakenWebClient;
     }
 

@@ -5,7 +5,7 @@ import tgb.cryptoexchange.cryptorates.constants.Exchange;
 
 import java.math.BigDecimal;
 
-public interface ExchangeClient {
+public interface ExchangeRateProvider {
 
     BigDecimal getRate(CryptoPair cryptoPair);
 

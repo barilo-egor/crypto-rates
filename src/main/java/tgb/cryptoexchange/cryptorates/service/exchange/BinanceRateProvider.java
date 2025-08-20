@@ -5,17 +5,16 @@ import org.springframework.web.reactive.function.client.WebClient;
 import tgb.cryptoexchange.cryptorates.constants.CryptoPair;
 import tgb.cryptoexchange.cryptorates.constants.Exchange;
 import tgb.cryptoexchange.cryptorates.dto.BinanceResponse;
-import tgb.cryptoexchange.cryptorates.exception.CryptoRatesException;
 import tgb.cryptoexchange.cryptorates.exception.UnsupportedCryptoPairException;
 
 import java.math.BigDecimal;
 
 @Component
-public class BinanceClient implements ExchangeClient {
+public class BinanceRateProvider implements ExchangeRateProvider {
 
     private final WebClient binanceWebClient;
 
-    public BinanceClient(WebClient binanceWebClient) {
+    public BinanceRateProvider(WebClient binanceWebClient) {
         this.binanceWebClient = binanceWebClient;
     }
 
