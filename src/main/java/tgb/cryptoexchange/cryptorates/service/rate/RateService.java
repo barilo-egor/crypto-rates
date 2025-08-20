@@ -12,6 +12,7 @@ import tgb.cryptoexchange.cryptorates.service.exchange.ExchangeRateProvider;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.Clock;
 import java.util.*;
 
 @Service
@@ -24,8 +25,13 @@ public class RateService {
 
     private final Integer ttlSeconds;
 
-    public RateService(List<ExchangeRateProvider> exchangeRateProviders, @Value("${rate.cache.ttl-seconds:15}") Integer ttlSeconds) {
+    private final Clock clock;
+
+    public RateService(List<ExchangeRateProvider> exchangeRateProviders,
+                       @Value("${rate.cache.ttl-seconds:15}") Integer ttlSeconds,
+                       Clock clock) {
         this.ttlSeconds = ttlSeconds;
+        this.clock = clock;
         this.exchangeClients = new EnumMap<>(CryptoPair.class);
         for (ExchangeRateProvider exchangeRateProvider : exchangeRateProviders) {
             for (CryptoPair cryptoPair : exchangeRateProvider.getExchange().getPairs()) {
@@ -36,11 +42,11 @@ public class RateService {
 
     public CryptoRate getRate(CryptoPair cryptoPair) {
         CryptoRateCache cryptoRateCache = this.cache.get(cryptoPair);
-        if (isValid(cryptoRateCache)) {
+        if (Objects.nonNull(cryptoRateCache) && isValid(cryptoRateCache)) {
             return cryptoRateCache.cryptoRate();
         }
         List<ExchangeRateProvider> exchangeRateProviders = this.exchangeClients.get(cryptoPair);
-        if (exchangeRateProviders == null || exchangeRateProviders.isEmpty()) {
+        if (exchangeRateProviders == null) {
             throw new ProviderNotFoundException("No exchange clients found for " + cryptoPair);
         }
         for (ExchangeRateProvider exchangeRateProvider : exchangeRateProviders) {
