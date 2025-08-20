@@ -6,6 +6,7 @@ import tgb.cryptoexchange.cryptorates.constants.CryptoPair;
 import tgb.cryptoexchange.cryptorates.constants.Exchange;
 import tgb.cryptoexchange.cryptorates.dto.BinanceResponse;
 import tgb.cryptoexchange.cryptorates.exception.CryptoRatesException;
+import tgb.cryptoexchange.cryptorates.exception.UnsupportedCryptoPairException;
 
 import java.math.BigDecimal;
 
@@ -27,7 +28,7 @@ public class BinanceClient implements ExchangeClient {
             case LTC_RUB -> "LTCRUB";
             case ETH_USD -> "ETHUSDT";
             case TRX_USD -> "TRXUSDT";
-            default -> throw new CryptoRatesException("Unsupported crypto pair");
+            default -> throw new UnsupportedCryptoPairException("Unsupported crypto pair");
         };
         BinanceResponse response = binanceWebClient.get()
                 .uri(

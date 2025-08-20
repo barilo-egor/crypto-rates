@@ -5,7 +5,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import tgb.cryptoexchange.cryptorates.constants.CryptoPair;
 import tgb.cryptoexchange.cryptorates.constants.Exchange;
 import tgb.cryptoexchange.cryptorates.dto.KrakenResponse;
-import tgb.cryptoexchange.cryptorates.exception.CryptoRatesException;
+import tgb.cryptoexchange.cryptorates.exception.UnsupportedCryptoPairException;
 
 import java.math.BigDecimal;
 
@@ -21,7 +21,7 @@ public class KrakenClient implements ExchangeClient {
     @Override
     public BigDecimal getRate(CryptoPair cryptoPair) {
         if (!CryptoPair.XMR_USD.equals(cryptoPair)) {
-            throw new CryptoRatesException("Unsupported crypto pair");
+            throw new UnsupportedCryptoPairException("Unsupported crypto pair");
         }
         String pair = "XMRUSD";
         KrakenResponse response = krakenWebClient.get()

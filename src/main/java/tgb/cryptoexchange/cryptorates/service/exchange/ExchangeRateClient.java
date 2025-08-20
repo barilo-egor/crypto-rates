@@ -5,7 +5,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import tgb.cryptoexchange.cryptorates.constants.CryptoPair;
 import tgb.cryptoexchange.cryptorates.constants.Exchange;
 import tgb.cryptoexchange.cryptorates.dto.ExchangeRateResponse;
-import tgb.cryptoexchange.cryptorates.exception.CryptoRatesException;
+import tgb.cryptoexchange.cryptorates.exception.UnsupportedCryptoPairException;
 
 import java.math.BigDecimal;
 
@@ -21,7 +21,7 @@ public class ExchangeRateClient implements ExchangeClient{
     @Override
     public BigDecimal getRate(CryptoPair cryptoPair) {
         if (CryptoPair.USD_RUB.equals(cryptoPair)) {
-            throw new CryptoRatesException("Unsupported crypto pair");
+            throw new UnsupportedCryptoPairException("Unsupported crypto pair");
         }
         ExchangeRateResponse response = exchangeRateWebClient.get()
                 .uri("/8ae628548cbe656cdc6f0a9e/latest/USD")
