@@ -26,7 +26,7 @@ public class RateService {
 
     public RateService(List<ExchangeRateProvider> exchangeRateProviders, @Value("${rate.cache.ttl-seconds:15}") Integer ttlSeconds) {
         this.ttlSeconds = ttlSeconds;
-        this.exchangeClients = new HashMap<>();
+        this.exchangeClients = new EnumMap<>(CryptoPair.class);
         for (ExchangeRateProvider exchangeRateProvider : exchangeRateProviders) {
             for (CryptoPair cryptoPair : exchangeRateProvider.getExchange().getPairs()) {
                 this.exchangeClients.computeIfAbsent(cryptoPair, k -> new ArrayList<>()).add(exchangeRateProvider);
