@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -14,6 +15,7 @@ import org.springframework.web.util.UriBuilder;
 import tgb.cryptoexchange.cryptorates.constants.CryptoPair;
 import tgb.cryptoexchange.cryptorates.constants.Exchange;
 import tgb.cryptoexchange.cryptorates.dto.BinanceResponse;
+import tgb.cryptoexchange.cryptorates.exception.UnsupportedCryptoPairException;
 
 import java.math.BigDecimal;
 import java.net.URI;
@@ -36,6 +38,12 @@ class BinanceRateProviderTest {
 
     static List<CryptoPair> getCryptoPairs() {
         return Exchange.BINANCE.getPairs();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"XMR_USD", "USD_RUB"})
+    void shouldThrowUnsupportedCryptoPairException(CryptoPair cryptoPair) {
+        assertThrows(UnsupportedCryptoPairException.class, () -> binanceRateProvider.getRate(cryptoPair));
     }
 
     @ParameterizedTest
