@@ -1,5 +1,6 @@
 package tgb.cryptoexchange.cryptorates.service.exchange;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import tgb.cryptoexchange.cryptorates.constants.CryptoPair;
 import tgb.cryptoexchange.cryptorates.constants.Exchange;
@@ -9,6 +10,7 @@ import tgb.cryptoexchange.cryptorates.exception.UnsupportedCryptoPairException;
 import java.math.BigDecimal;
 
 @Component
+@Slf4j
 public class KrakenRateProvider extends ExchangeRateProvider {
 
     protected KrakenRateProvider(ExchangeWebClientFactory exchangeWebClientFactory) {
@@ -29,6 +31,7 @@ public class KrakenRateProvider extends ExchangeRateProvider {
                 KrakenResponse.class
         );
         if (response == null) {
+            log.warn("Ответ от Kraken равен null для валютной пары {}.", cryptoPair.name());
             return null;
         }
         String responsePair = "XXMRZUSD";

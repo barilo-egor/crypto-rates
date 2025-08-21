@@ -1,5 +1,6 @@
 package tgb.cryptoexchange.cryptorates.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +12,7 @@ import tgb.cryptoexchange.cryptorates.dto.CryptoRate;
 import tgb.cryptoexchange.cryptorates.service.rate.RateService;
 import tgb.cryptoexchange.web.ApiResponse;
 
+@Slf4j
 @RestController
 @RequestMapping("/crypto-rates")
 public class CryptoRatesController {
@@ -23,6 +25,7 @@ public class CryptoRatesController {
 
     @GetMapping("/{pair}")
     public ResponseEntity<ApiResponse<CryptoRate>> getCryptoRate(@PathVariable CryptoPair pair) {
+        log.trace("Запрос на получение курса для пары {}", pair.name());
         return new ResponseEntity<>(
                 ApiResponse.success(rateService.getRate(pair)),
                 HttpStatus.OK

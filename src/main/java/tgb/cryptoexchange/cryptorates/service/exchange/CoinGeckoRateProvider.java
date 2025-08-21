@@ -1,5 +1,6 @@
 package tgb.cryptoexchange.cryptorates.service.exchange;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import tgb.cryptoexchange.cryptorates.constants.CryptoPair;
 import tgb.cryptoexchange.cryptorates.constants.Exchange;
@@ -11,6 +12,7 @@ import java.math.BigDecimal;
 import java.util.Map;
 
 @Service
+@Slf4j
 public class CoinGeckoRateProvider extends ExchangeRateProvider {
 
     private final Map<CryptoPair, String> idsParams = Map.of(
@@ -51,6 +53,7 @@ public class CoinGeckoRateProvider extends ExchangeRateProvider {
                 CoinGeckoResponse.class
         );
         if (response == null) {
+            log.warn("Ответ от CoinGecko равен null для валютной пары {}.", cryptoPair.name());
             return null;
         }
         return response.getRate(idsParam, vsCurrenciesParam);

@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Clock;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -35,7 +36,18 @@ public class RateService {
         this.exchangeClients = new EnumMap<>(CryptoPair.class);
         for (ExchangeRateProvider exchangeRateProvider : exchangeRateProviders) {
             for (CryptoPair cryptoPair : exchangeRateProvider.getExchange().getPairs()) {
+                log.trace("Для валютной пары {} добавлен провайдер биржи {}", cryptoPair.name(), exchangeRateProvider.getExchange().name());
                 this.exchangeClients.computeIfAbsent(cryptoPair, k -> new ArrayList<>()).add(exchangeRateProvider);
+            }
+        }
+        if (log.isDebugEnabled()) {
+            for (Map.Entry<CryptoPair, List<ExchangeRateProvider>> entry : this.exchangeClients.entrySet()) {
+                log.debug("Для валютной пары {} добавлены следующие биржи: {}",
+                        entry.getKey().name(),
+                        entry.getValue().stream()
+                                .map(prov -> prov.getExchange().name())
+                                .collect(Collectors.joining(","))
+                );
             }
         }
     }
@@ -56,7 +68,7 @@ public class RateService {
                     return createCryptoRate(cryptoPair, rate);
                 }
             } catch (Exception e) {
-                log.warn("Ошибка при получении курса валютной пары {} у биржи {}:",
+                log.error("Ошибка при получении курса валютной пары {} у биржи {}:",
                         cryptoPair.name(), exchangeRateProvider.getExchange().name(), e);
             }
         }

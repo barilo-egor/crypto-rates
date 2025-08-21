@@ -1,5 +1,6 @@
 package tgb.cryptoexchange.cryptorates.service.exchange;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import tgb.cryptoexchange.cryptorates.constants.CryptoPair;
 import tgb.cryptoexchange.cryptorates.constants.Exchange;
@@ -9,6 +10,7 @@ import tgb.cryptoexchange.cryptorates.exception.UnsupportedCryptoPairException;
 import java.math.BigDecimal;
 
 @Component
+@Slf4j
 public class ExchangeRateRateProvider extends ExchangeRateProvider {
 
     protected ExchangeRateRateProvider(ExchangeWebClientFactory exchangeWebClientFactory) {
@@ -25,6 +27,7 @@ public class ExchangeRateRateProvider extends ExchangeRateProvider {
                 ExchangeRateResponse.class
         );
         if (response == null) {
+            log.warn("Ответ от ExchangeRate равен null для валютной пары {}.", cryptoPair.name());
             return null;
         }
         return response.getRate("RUB");

@@ -1,5 +1,6 @@
 package tgb.cryptoexchange.cryptorates.service.exchange;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import tgb.cryptoexchange.cryptorates.constants.CryptoPair;
 import tgb.cryptoexchange.cryptorates.constants.Exchange;
@@ -10,6 +11,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @Component
 public class BinanceRateProvider extends ExchangeRateProvider {
 
@@ -39,6 +41,7 @@ public class BinanceRateProvider extends ExchangeRateProvider {
                 BinanceResponse.class
         );
         if (response == null) {
+            log.warn("Ответ от Binance равен null для валютной пары {}.", cryptoPair.name());
             return null;
         }
         return response.getPrice();
