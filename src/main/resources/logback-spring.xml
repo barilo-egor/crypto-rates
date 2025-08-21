@@ -75,7 +75,7 @@
     <!-- НАСТРОЙКИ ЛОГГЕРОВ -->
 
     <!-- Application логи идут в application.log и консоль -->
-    <logger name="tgb.cryptoexchange.cryptorates" additivity="false">
+    <logger name="tgb.cryptoexchange" additivity="false">
         <appender-ref ref="APPLICATION_FILE"/>
         <appender-ref ref="CONSOLE"/>
     </logger>
