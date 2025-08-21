@@ -7,10 +7,12 @@ import tgb.cryptoexchange.cryptorates.cache.CryptoRateCache;
 import tgb.cryptoexchange.cryptorates.constants.CryptoPair;
 import tgb.cryptoexchange.cryptorates.dto.CryptoRate;
 import tgb.cryptoexchange.cryptorates.exception.CryptoRatesException;
+import tgb.cryptoexchange.cryptorates.exception.ProviderNotFoundException;
 import tgb.cryptoexchange.cryptorates.service.exchange.ExchangeRateProvider;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.Clock;
 import java.util.*;
 
 @Service
@@ -19,13 +21,18 @@ public class RateService {
 
     private final Map<CryptoPair, List<ExchangeRateProvider>> exchangeClients;
 
-    private final Map<CryptoPair, CryptoRateCache> cache = new HashMap<>();
+    private final Map<CryptoPair, CryptoRateCache> cache = new EnumMap<>(CryptoPair.class);
 
     private final Integer ttlSeconds;
 
-    public RateService(List<ExchangeRateProvider> exchangeRateProviders, @Value("${rate.cache.ttl-seconds:15}") Integer ttlSeconds) {
+    private final Clock clock;
+
+    public RateService(List<ExchangeRateProvider> exchangeRateProviders,
+                       @Value("${rate.cache.ttl-seconds:15}") Integer ttlSeconds,
+                       Clock clock) {
         this.ttlSeconds = ttlSeconds;
-        this.exchangeClients = new HashMap<>();
+        this.clock = clock;
+        this.exchangeClients = new EnumMap<>(CryptoPair.class);
         for (ExchangeRateProvider exchangeRateProvider : exchangeRateProviders) {
             for (CryptoPair cryptoPair : exchangeRateProvider.getExchange().getPairs()) {
                 this.exchangeClients.computeIfAbsent(cryptoPair, k -> new ArrayList<>()).add(exchangeRateProvider);
@@ -34,21 +41,19 @@ public class RateService {
     }
 
     public CryptoRate getRate(CryptoPair cryptoPair) {
-        CryptoRateCache cache = this.cache.get(cryptoPair);
-        if (isValid(cache)) {
-            return cache.cryptoRate();
+        CryptoRateCache cryptoRateCache = this.cache.get(cryptoPair);
+        if (Objects.nonNull(cryptoRateCache) && isValid(cryptoRateCache)) {
+            return cryptoRateCache.cryptoRate();
         }
         List<ExchangeRateProvider> exchangeRateProviders = this.exchangeClients.get(cryptoPair);
-        if (exchangeRateProviders == null || exchangeRateProviders.isEmpty()) {
-            throw new CryptoRatesException("No exchange clients found for " + cryptoPair);
+        if (exchangeRateProviders == null) {
+            throw new ProviderNotFoundException("No exchange clients found for " + cryptoPair);
         }
         for (ExchangeRateProvider exchangeRateProvider : exchangeRateProviders) {
             try {
-                if (exchangeRateProvider.getExchange().getPairs().contains(cryptoPair)) {
-                    BigDecimal rate = exchangeRateProvider.getRate(cryptoPair);
-                    if (Objects.nonNull(rate)) {
-                        return createCryptoRate(cryptoPair, rate);
-                    }
+                BigDecimal rate = exchangeRateProvider.getRate(cryptoPair);
+                if (Objects.nonNull(rate)) {
+                    return createCryptoRate(cryptoPair, rate);
                 }
             } catch (Exception e) {
                 log.warn("Ошибка при получении курса валютной пары {} у биржи {}:",
@@ -59,15 +64,15 @@ public class RateService {
     }
 
     private boolean isValid(CryptoRateCache cache) {
-        return cache.timestamp() + (ttlSeconds * 1000) > System.currentTimeMillis();
+        return cache.timestamp() + (ttlSeconds * 1000) > clock.millis();
     }
 
     private CryptoRate createCryptoRate(CryptoPair cryptoPair, BigDecimal rate) {
         CryptoRate cryptoRate = new CryptoRate();
         cryptoRate.setRate(rate.setScale(8, RoundingMode.HALF_UP).doubleValue());
         cryptoRate.setPair(cryptoPair);
-        cryptoRate.setTimestamp(System.currentTimeMillis());
-        this.cache.put(cryptoPair, new CryptoRateCache(cryptoRate, System.currentTimeMillis()));
+        cryptoRate.setTimestamp(clock.millis());
+        this.cache.put(cryptoPair, new CryptoRateCache(cryptoRate, clock.millis()));
         return cryptoRate;
     }
 }
