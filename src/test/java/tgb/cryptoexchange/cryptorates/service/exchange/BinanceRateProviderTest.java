@@ -68,6 +68,6 @@ class BinanceRateProviderTest {
     @Test
     @DisplayName("getExchange() - простой вызов - возвращается биржа Binance")
     void shouldReturnBinanceExchange() {
-        assertEquals(Exchange.COIN_GECKO, binanceRateProvider.getExchange());
+        assertEquals(Exchange.BINANCE, binanceRateProvider.getExchange());
     }
 }
