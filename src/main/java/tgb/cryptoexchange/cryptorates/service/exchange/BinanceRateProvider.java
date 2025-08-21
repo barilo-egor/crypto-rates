@@ -5,27 +5,30 @@ import org.springframework.stereotype.Component;
 import tgb.cryptoexchange.cryptorates.constants.CryptoPair;
 import tgb.cryptoexchange.cryptorates.constants.Exchange;
 import tgb.cryptoexchange.cryptorates.dto.BinanceResponse;
+import tgb.cryptoexchange.cryptorates.exception.CryptoRatesException;
 import tgb.cryptoexchange.cryptorates.exception.UnsupportedCryptoPairException;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
 @Component
 public class BinanceRateProvider extends ExchangeRateProvider {
 
-    private final Map<CryptoPair, String> pairs;
+    private final Map<CryptoPair, String> pairs = Map.of(
+            CryptoPair.BTC_USD, "BTCUSDT",
+            CryptoPair.LTC_USD, "LTCUSDT",
+            CryptoPair.BTC_RUB, "BTCRUB",
+            CryptoPair.LTC_RUB, "LTCRUB",
+            CryptoPair.ETH_USD, "ETHUSDT",
+            CryptoPair.TRX_USD, "TRXUSDT"
+    );
 
     protected BinanceRateProvider(ExchangeWebClientFactory exchangeWebClientFactory) {
         super(exchangeWebClientFactory);
-        this.pairs = new HashMap<>();
-        this.pairs.put(CryptoPair.BTC_USD, "BTCUSDT");
-        this.pairs.put(CryptoPair.LTC_USD, "LTCUSDT");
-        this.pairs.put(CryptoPair.BTC_RUB, "BTCRUB");
-        this.pairs.put(CryptoPair.LTC_RUB, "LTCRUB");
-        this.pairs.put(CryptoPair.ETH_USD, "ETHUSDT");
-        this.pairs.put(CryptoPair.TRX_USD, "TRXUSDT");
+        if (!getExchange().getPairs().stream().allMatch(pairs::containsKey)) {
+            throw new CryptoRatesException("Some Binance crypto pair does not have param.");
+        }
     }
 
     @Override
