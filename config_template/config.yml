@@ -6,4 +6,4 @@ logging:
     root: INFO
     org.springframework: INFO
     org.hibernate: INFO
-    tgb.cryptoexchange.cryptorates: DEBUG
+    tgb.cryptoexchange: DEBUG

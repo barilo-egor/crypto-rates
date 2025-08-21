@@ -11,10 +11,12 @@ import tgb.cryptoexchange.cryptorates.constants.CryptoPair;
 import tgb.cryptoexchange.cryptorates.dto.CryptoRate;
 import tgb.cryptoexchange.cryptorates.service.rate.RateService;
 import tgb.cryptoexchange.web.ApiResponse;
+import tgb.cryptoexchange.web.LogResponseBody;
 
 @Slf4j
 @RestController
 @RequestMapping("/crypto-rates")
+@LogResponseBody
 public class CryptoRatesController {
 
     private final RateService rateService;
