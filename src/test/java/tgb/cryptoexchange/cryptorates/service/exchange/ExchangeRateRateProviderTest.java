@@ -44,7 +44,7 @@ class ExchangeRateRateProviderTest {
 
     @ParameterizedTest
     @ValueSource(strings = { "ETH_USD", "XMR_USD" })
-    @DisplayName("getRate(CryptoPair cryptoPair) - валютная пара не обрабатываемая биржей CoinGecko - проброс UnsupportedCryptoPairException")
+    @DisplayName("getRate(CryptoPair cryptoPair) - валютная пара не обрабатываемая биржей ExchangeRate - проброс UnsupportedCryptoPairException")
     void shouldThrowUnsupportedCryptoPairExceptionIfNotExchangeCryptoPair(CryptoPair cryptoPair) {
         assertThrows(UnsupportedCryptoPairException.class, () -> exchangeRateRateProvider.getRate(cryptoPair),
                 "Unsupported crypto pair " + cryptoPair.name());
@@ -86,7 +86,7 @@ class ExchangeRateRateProviderTest {
 
     @Test
     @DisplayName("getExchange() - простой вызов - возвращается биржа EXCHANGE_RATE")
-    void shouldReturnCoinGeckoExchange() {
+    void shouldReturnExchangeRateExchange() {
         assertEquals(Exchange.EXCHANGE_RATE, exchangeRateRateProvider.getExchange());
     }
 }
