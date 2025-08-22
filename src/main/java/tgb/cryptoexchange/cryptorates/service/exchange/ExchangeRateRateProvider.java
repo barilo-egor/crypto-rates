@@ -1,0 +1,41 @@
+package tgb.cryptoexchange.cryptorates.service.exchange;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
+import tgb.cryptoexchange.cryptorates.constants.CryptoPair;
+import tgb.cryptoexchange.cryptorates.constants.Exchange;
+import tgb.cryptoexchange.cryptorates.dto.ExchangeRateResponse;
+import tgb.cryptoexchange.cryptorates.exception.UnsupportedCryptoPairException;
+
+import java.math.BigDecimal;
+
+@Component
+@Slf4j
+public class ExchangeRateRateProvider extends ExchangeRateProvider {
+
+    protected ExchangeRateRateProvider(ExchangeWebClientFactory exchangeWebClientFactory) {
+        super(exchangeWebClientFactory);
+    }
+
+    @Override
+    public BigDecimal getRate(CryptoPair cryptoPair) {
+        if (!getExchange().getPairs().contains(cryptoPair)) {
+            throw new UnsupportedCryptoPairException("Unsupported crypto pair: " + cryptoPair);
+        }
+        ExchangeRateResponse response = exchangeWebClientFactory.get(getExchange(),
+                uriBuilder -> uriBuilder.path("/8ae628548cbe656cdc6f0a9e/latest/USD").build(),
+                ExchangeRateResponse.class
+        );
+        if (response == null) {
+            log.warn("Ответ от ExchangeRate равен null для валютной пары {}.", cryptoPair.name());
+            return null;
+        }
+        return response.getRate("RUB");
+    }
+
+    @Override
+    public Exchange getExchange() {
+        return Exchange.EXCHANGE_RATE;
+    }
+
+}
