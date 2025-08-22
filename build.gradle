@@ -43,3 +43,11 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+tasks.jar {
+    archiveFileName = "crypto-rates.jar"
+}
+
+bootJar {
+    archiveFileName = 'crypto-rates.jar'
+}
