@@ -7,3 +7,9 @@ logging:
     org.springframework: INFO
     org.hibernate: INFO
     tgb.cryptoexchange: DEBUG
+springdoc:
+  swagger-ui:
+    enabled:
+    path:
+  api-docs:
+    path:
