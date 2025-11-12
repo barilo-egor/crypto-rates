@@ -11,6 +11,9 @@ import tgb.cryptoexchange.cryptorates.exception.UnsupportedCryptoPairException;
 import java.math.BigDecimal;
 import java.util.Map;
 
+/**
+ * Реализация получения курсов биржи {@link Exchange#BINANCE}
+ */
 @Slf4j
 @Component
 public class BinanceRateProvider extends ExchangeRateProvider {

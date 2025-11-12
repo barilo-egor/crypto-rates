@@ -1,5 +1,8 @@
 package tgb.cryptoexchange.cryptorates.constants;
 
+/**
+ * Константы для криптовалют.
+ */
 public enum CryptoPair {
     BTC_USD,
     BTC_RUB,

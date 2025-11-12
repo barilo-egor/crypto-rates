@@ -7,6 +7,9 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Ответ от API биржи {@link tgb.cryptoexchange.cryptorates.constants.Exchange#COIN_GECKO}
+ */
 @Data
 public class CoinGeckoResponse {
     private Map<String, Map<String, BigDecimal>> rates = new HashMap<>();

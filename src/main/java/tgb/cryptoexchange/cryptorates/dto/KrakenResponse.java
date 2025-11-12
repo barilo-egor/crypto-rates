@@ -10,6 +10,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Ответ от API биржи {@link tgb.cryptoexchange.cryptorates.constants.Exchange#KRAKEN}
+ */
 @Data
 public class KrakenResponse {
 
