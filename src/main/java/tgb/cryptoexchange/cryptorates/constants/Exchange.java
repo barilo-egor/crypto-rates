@@ -7,6 +7,9 @@ import java.util.List;
 
 import static tgb.cryptoexchange.cryptorates.constants.CryptoPair.*;
 
+/**
+ * Константы бирж. Содержат список валют и базовый url.
+ */
 @AllArgsConstructor
 @Getter
 public enum Exchange {

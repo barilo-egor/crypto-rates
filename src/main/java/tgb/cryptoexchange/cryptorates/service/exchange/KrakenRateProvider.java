@@ -9,6 +9,9 @@ import tgb.cryptoexchange.cryptorates.exception.UnsupportedCryptoPairException;
 
 import java.math.BigDecimal;
 
+/**
+ * Реализация получения курсов биржи {@link Exchange#KRAKEN}
+ */
 @Component
 @Slf4j
 public class KrakenRateProvider extends ExchangeRateProvider {

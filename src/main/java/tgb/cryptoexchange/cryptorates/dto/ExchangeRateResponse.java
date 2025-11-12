@@ -7,6 +7,9 @@ import lombok.Data;
 import java.math.BigDecimal;
 import java.util.Map;
 
+/**
+ * Ответ от API биржи {@link tgb.cryptoexchange.cryptorates.constants.Exchange#EXCHANGE_RATE}
+ */
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ExchangeRateResponse {

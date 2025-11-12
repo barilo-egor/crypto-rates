@@ -11,6 +11,9 @@ import tgb.cryptoexchange.cryptorates.exception.UnsupportedCryptoPairException;
 import java.math.BigDecimal;
 import java.util.Map;
 
+/**
+ * Реализация получения курсов биржи {@link Exchange#COIN_GECKO}
+ */
 @Service
 @Slf4j
 public class CoinGeckoRateProvider extends ExchangeRateProvider {

@@ -16,6 +16,9 @@ import java.time.Clock;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Сервис для получения курсов криптовалютных пар.
+ */
 @Service
 @Slf4j
 public class RateService {
@@ -52,6 +55,11 @@ public class RateService {
         }
     }
 
+    /**
+     * Метод для получения курса для переданной в параметре криптовалютной пары.
+     * @param cryptoPair валютная пара
+     * @return объект представления курса криптовалюты
+     */
     public CryptoRate getRate(CryptoPair cryptoPair) {
         CryptoRateCache cryptoRateCache = this.cache.get(cryptoPair);
         if (Objects.nonNull(cryptoRateCache) && isValid(cryptoRateCache)) {
